@@ -4,20 +4,9 @@ const gravatar = require('gravatar');
 const bcrypt = require('bcryptjs');
 const User = require('../../models/User');
 
-function successResponse(res, message) {
-  return res.status(200).send(message);
-}
-
-function errorResponse(res, httpStatus, errorList) {
-  res.status(httpStatus).json({ errors: errorList });
-}
-
-function serverErrorResponse(res) {
-  return errorResponse(res, 500, [{ msg: 'Server error' }]);
-}
-
 // JSON validation - see https://express-validator.github.io/docs/
 const { check, validationResult } = require('express-validator');
+
 // @route   POST api/users
 // @desc    Register User
 // @access  Public
@@ -39,22 +28,18 @@ router.post(
       return errorResponse(res, 400, errors.array());
     }
 
+    // Process request
     const { name, email, password } = req.body;
     try {
-      console.log('Check pre-existing user');
       let existingUser = await User.findOne({ email });
       if (existingUser) {
         return errorResponse(res, 400, [{ msg: 'User already exists' }]);
       }
 
-      console.log('Get user Gravatar');
-      const avatar = gravatar.url(email, { s: '200', r: 'pg', d: 'mm' });
-
-      console.log('Encrypt password');
       const salt = await bcrypt.genSalt(10);
       passwordHash = await bcrypt.hash(password, salt);
 
-      console.log('Save user');
+      const avatar = gravatar.url(email, { s: '200', r: 'pg', d: 'mm' });
       let user = new User({
         name,
         email,
@@ -63,7 +48,6 @@ router.post(
       });
 
       await user.save();
-
       return successResponse(res, 'User registered');
     } catch (err) {
       console.error(err.message);
@@ -71,5 +55,17 @@ router.post(
     }
   }
 );
+
+function successResponse(res, message) {
+  return res.status(200).send(message);
+}
+
+function errorResponse(res, httpStatus, errorList) {
+  res.status(httpStatus).json({ errors: errorList });
+}
+
+function serverErrorResponse(res) {
+  return errorResponse(res, 500, [{ msg: 'Server error' }]);
+}
 
 module.exports = router;
