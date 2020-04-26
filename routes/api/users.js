@@ -1,10 +1,11 @@
 const express = require('express');
 const router = express.Router();
-// JSON validation - see https://express-validator.github.io/docs/
-const { check, validationResult } = require('express-validator');
-
+const gravatar = require('gravatar');
+const bcrypt = require('bcryptjs');
 const User = require('../../models/User');
 
+// JSON validation - see https://express-validator.github.io/docs/
+const { check, validationResult } = require('express-validator');
 // @route   POST api/users
 // @desc    Register User
 // @access  Public
@@ -24,26 +25,40 @@ router.post(
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() }); // Constant for this?
-      console.log();
     }
 
     const { name, email, password } = req.body;
     try {
-      // Check pre-existing user
-      let user = await User.findOne({ email });
-      if (user) {
-        res.status(400).json({ errors: [{ msg: 'User already exists' }] });
+      console.log('Check pre-existing user');
+      let existingUser = await User.findOne({ email });
+      if (existingUser) {
+        return res
+          .status(400)
+          .json({ errors: [{ msg: 'User already exists' }] });
       }
 
-      // Get user Gravatar
-      // Encrypt password
-      // Return JSON WebToken [login]
+      console.log('Get user Gravatar');
+      const avatar = gravatar.url(email, { s: '200', r: 'pg', d: 'mm' });
+
+      console.log('Encrypt password');
+      const salt = await bcrypt.genSalt(10);
+      passwordHash = await bcrypt.hash(password, salt);
+
+      console.log('Save user');
+      let user = new User({
+        name,
+        email,
+        avatar,
+        password: passwordHash,
+      });
+
+      await user.save();
+
+      return res.status(200).send('User registered');
     } catch (err) {
       console.error(err.message);
-      res.status(500).send('Server error');
+      return res.status(500).send('Server error');
     }
-
-    res.send('User registered');
   }
 );
 
