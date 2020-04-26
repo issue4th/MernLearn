@@ -12,8 +12,8 @@ app.get('/', (req, res) => res.send('API running'));
 // Define API routes
 app.use('/api/users', require('./routes/api/users'));
 app.use('/api/posts', require('./routes/api/posts'));
-//app.use('/api/profile', require('./routes/api/profile'));
-//app.use('/api/auth', require('./routes/api/auth'));
+app.use('/api/profile', require('./routes/api/profile'));
+app.use('/api/auth', require('./routes/api/auth'));
 
 app.listen(APP_LISTEN_PORT, () =>
   console.log(`Server started on port ${APP_LISTEN_PORT}`)
