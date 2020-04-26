@@ -1,0 +1,19 @@
+{
+  "name": "mernlearn",
+  "version": "1.0.0",
+  "description": "Social network for developers",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/issue4th/MernLearn.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/issue4th/MernLearn/issues"
+  },
+  "homepage": "https://github.com/issue4th/MernLearn#readme"
+}
