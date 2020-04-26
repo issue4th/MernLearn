@@ -2,6 +2,9 @@ const express = require('express');
 const router = express.Router();
 // JSON validation - see https://express-validator.github.io/docs/
 const { check, validationResult } = require('express-validator');
+
+const User = require('../../models/User');
+
 // @route   POST api/users
 // @desc    Register User
 // @access  Public
@@ -16,13 +19,25 @@ router.post(
       'Please enter a password with 6 or more characters'
     ).isLength({ min: 6 }),
   ],
-  (req, res) => {
+  async (req, res) => {
+    // Validate request
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() }); // Constant for this?
       console.log();
     }
-    res.send('User test route');
+
+    const { name, email, password } = req.body;
+
+    // Check pre-existing user
+
+    // Get user Gravatar
+
+    // Encrypt password
+
+    // Return JSON WebToken [login]
+
+    res.send('User registered');
   }
 );
 
