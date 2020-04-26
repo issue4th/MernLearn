@@ -4,6 +4,18 @@ const gravatar = require('gravatar');
 const bcrypt = require('bcryptjs');
 const User = require('../../models/User');
 
+function successResponse(res, message) {
+  return res.status(200).send(message);
+}
+
+function errorResponse(res, httpStatus, errorList) {
+  res.status(httpStatus).json({ errors: errorList });
+}
+
+function serverErrorResponse(res) {
+  return errorResponse(res, 500, [{ msg: 'Server error' }]);
+}
+
 // JSON validation - see https://express-validator.github.io/docs/
 const { check, validationResult } = require('express-validator');
 // @route   POST api/users
@@ -24,7 +36,7 @@ router.post(
     // Validate request
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() }); // Constant for this?
+      return errorResponse(res, 400, errors.array());
     }
 
     const { name, email, password } = req.body;
@@ -32,9 +44,7 @@ router.post(
       console.log('Check pre-existing user');
       let existingUser = await User.findOne({ email });
       if (existingUser) {
-        return res
-          .status(400)
-          .json({ errors: [{ msg: 'User already exists' }] });
+        return errorResponse(res, 400, [{ msg: 'User already exists' }]);
       }
 
       console.log('Get user Gravatar');
@@ -54,10 +64,10 @@ router.post(
 
       await user.save();
 
-      return res.status(200).send('User registered');
+      return successResponse(res, 'User registered');
     } catch (err) {
       console.error(err.message);
-      return res.status(500).send('Server error');
+      return serverErrorResponse(res);
     }
   }
 );
