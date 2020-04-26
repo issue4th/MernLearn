@@ -28,14 +28,15 @@ router.post(
     }
 
     const { name, email, password } = req.body;
-
-    // Check pre-existing user
-
-    // Get user Gravatar
-
-    // Encrypt password
-
-    // Return JSON WebToken [login]
+    try {
+      // Check pre-existing user
+      // Get user Gravatar
+      // Encrypt password
+      // Return JSON WebToken [login]
+    } catch (err) {
+      console.error(err.message);
+      res.status(500).send('Server error');
+    }
 
     res.send('User registered');
   }
