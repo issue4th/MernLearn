@@ -6,6 +6,10 @@ const app = express();
 const connectDatabase = require('./config/db');
 connectDatabase();
 
+// Initialise middleware
+// HTTP bodyparser etc - req.body
+app.use(express.json({ extended: false }));
+
 // Intercept GET on /
 app.get('/', (req, res) => res.send('API running'));
 
