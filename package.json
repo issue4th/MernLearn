@@ -15,5 +15,9 @@
   "bugs": {
     "url": "https://github.com/issue4th/MernLearn/issues"
   },
-  "homepage": "https://github.com/issue4th/MernLearn#readme"
+  "homepage": "https://github.com/issue4th/MernLearn#readme",
+  "dependencies": {
+    "express": "^4.17.1",
+    "express-validator": "^6.4.0"
+  }
 }
